@@ -29,15 +29,30 @@ if (navigator.geolocation) {
       // 13 is zoom level
       const map = L.map('map').setView(coords, 13);
 
-      L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      L.marker(coords)
-        .addTo(map)
-        .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-        .openPopup();
+      // adding an 'event clicker' to add markers IMP
+      // special methods from Leaflet
+      map.on('click', function (mapEvent) {
+        const { lat, lng } = mapEvent.latlng;
+
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 250,
+              minWidth: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: 'running-popup',
+            })
+          )
+          .setPopupContent('Workout')
+          .openPopup();
+      });
     },
     function () {
       alert('Could not get your position.');
@@ -48,3 +63,5 @@ if (navigator.geolocation) {
 // 02. Using the Leaflet Library to display the map
 // This library is hosted on a CDN = Content Delivery Network
 // We need to use 'defer' on the used js files in index.html so they load in the right order IMP
+
+// 03. Displaying a marker with Leaflet
