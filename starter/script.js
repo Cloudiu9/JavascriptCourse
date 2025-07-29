@@ -8,6 +8,8 @@ class Workout {
   // any object should have some kind of unique identifier so we can later identify it with that ID IMP
   id = (Date.now() + '').slice(-10); // usually we have a library in charge of class id's, here we're just converting the date to a string and taking the last 10 numbers IMP
 
+  clicks = 0;
+
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
     this.distance = distance; // in km
@@ -21,6 +23,10 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()] // returns 0-11
     } ${this.date.getDate()}`;
+  }
+
+  click() {
+    this.clicks++;
   }
 }
 
@@ -79,14 +85,24 @@ class App {
   #map;
   #mapEvent;
   #workouts = [];
+  #mapZoomLevel = 13;
 
   constructor() {
     // immediately call this func
+
+    // Get user's position
     this.#getPosition();
+
+    // Get data from local storage
+    this.#getLocalStorage();
+
+    // Attach event handlers
     form.addEventListener('submit', this.#newWorkout.bind(this)); // newWorkout is gonna pont to the HTML elem it was called on (so 'form', because it is an event handler func) ==> fix it with .bind(this == App object) IMP IMP
 
     // Switching between running/cycling
     inputType.addEventListener('change', this.#toggleElevationField);
+
+    containerWorkouts.addEventListener('click', this.#moveToPopup.bind(this));
   }
 
   #getPosition() {
@@ -115,7 +131,7 @@ class App {
     const coords = [latitude, longitude];
 
     // 13 is zoom level
-    this.#map = L.map('map').setView(coords, 13);
+    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution:
@@ -125,6 +141,11 @@ class App {
     // adding an 'event clicker' to add markers IMP
     // special methods from Leaflet
     this.#map.on('click', this.#showForm.bind(this));
+
+    // load workouts from local storage
+    this.#workouts.forEach(work => {
+      this.#renderWorkoutMarker(work);
+    });
   }
 
   #showForm(mapE) {
@@ -220,6 +241,9 @@ class App {
 
     // Hide form +  Clear input fields
     this.#hideForm();
+
+    // 11. Set local storage to all workouts
+    this.#setLocalStorage();
   }
 
   #renderWorkoutMarker(workout) {
@@ -293,6 +317,65 @@ class App {
         `;
 
     form.insertAdjacentHTML('afterend', html); // added as sibling at the end of form
+  }
+
+  // 10. Move to marker on click
+  #moveToPopup(e) {
+    // event delegation (adding event handler to parent)
+    // closest = opposite of querySelector (closest parent)
+    const workoutEl = e.target.closest('.workout');
+
+    if (!workoutEl) return;
+
+    // IMP get workout data from the workouts array
+    const workout = this.#workouts.find(
+      work => work.id === workoutEl.dataset.id
+    );
+
+    // Leaflet method
+    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+      animate: true,
+      pan: {
+        // duration of animation
+        duration: 1,
+      },
+    });
+
+    // using the public interface
+    // workout.click(); // doesn't work on objects loaded from storage
+  }
+
+  // Using local storage API
+  // should only be used for small amounts of data (becase it's 'blocking') IMP
+
+  #setLocalStorage() {
+    // key ('workouts') - value store, both values need to be strings
+    // using JSON.stringify() can transform any object into a string IMP
+
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts)); // adding the workouts array
+  }
+
+  // IMP
+  // When we load back the objects, they lose their prototype chains (so they can't use methods from Running / Workout anymore. workout.click() no longer works)
+
+  #getLocalStorage() {
+    // We need to turn back the string into an object with JSON.parse (opposite of stringify) IMP
+
+    const data = JSON.parse(localStorage.getItem('workouts')); // ==> an array with the workout objects
+
+    if (!data) return;
+
+    this.#workouts = data;
+    this.#workouts.forEach(work => {
+      this.#renderWorkoutMarker(work);
+      // this.#renderWorkoutMarker(work); // doesn't work (it's called right at the beginning, before the map has even loaded)
+    });
+  }
+
+  // clears local storage and refreshes the page
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 
