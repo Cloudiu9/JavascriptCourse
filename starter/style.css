@@ -40,6 +40,37 @@ a:visited {
   color: var(--color-brand--1);
 }
 
+/* BUTTONS */
+.inner-flex {
+  display: flex;
+  height: 6rem;
+  margin-top: -5rem;
+  flex-direction: column;
+  align-items: end;
+}
+
+.edit-flex {
+  display: flex;
+  margin-top: -3rem;
+  flex-direction: column;
+  align-items: end;
+  /* pointer-events: none;  make container not clickable (so it doesn't cover the workout), not needed anymore, I put the edit button inside of the h2 */
+}
+
+.fa {
+  font-size: 1.75rem;
+}
+
+button.crud {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+button.crud:hover {
+  background-color: grey;
+}
+
 /* SIDEBAR */
 .sidebar {
   flex-basis: 50rem;

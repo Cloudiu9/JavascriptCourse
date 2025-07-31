@@ -80,6 +80,7 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+const btnDeleteAll = document.querySelector('.delete-all');
 
 class App {
   #map;
@@ -97,12 +98,19 @@ class App {
     this.#getLocalStorage();
 
     // Attach event handlers
-    form.addEventListener('submit', this.#newWorkout.bind(this)); // newWorkout is gonna pont to the HTML elem it was called on (so 'form', because it is an event handler func) ==> fix it with .bind(this == App object) IMP IMP
+    form.addEventListener('submit', this.#newWorkout.bind(this)); // newWorkout is gonna point to the HTML elem it was called on (so 'form', because it is an event handler func) ==> fix it with .bind(this == App object) IMP IMP
 
     // Switching between running/cycling
     inputType.addEventListener('change', this.#toggleElevationField);
 
     containerWorkouts.addEventListener('click', this.#moveToPopup.bind(this));
+
+    btnDeleteAll.addEventListener('click', this.reset.bind(this));
+
+    containerWorkouts.addEventListener(
+      'click',
+      this.#handleEditClick.bind(this)
+    );
   }
 
   #getPosition() {
@@ -174,10 +182,17 @@ class App {
     setTimeout(() => (form.style.display = 'grid'), 1000); // happens after 1 sec
   }
 
-  #toggleElevationField() {
-    // closest == reverse querySelector (searches for parents, not children) ==> selects first(closest) parent with this class name
-    inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
-    inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+  #toggleElevationField(forceType = null) {
+    const isRunning = forceType
+      ? forceType === 'running'
+      : inputType.value === 'running';
+
+    inputElevation
+      .closest('.form__row')
+      .classList.toggle('form__row--hidden', isRunning);
+    inputCadence
+      .closest('.form__row')
+      .classList.toggle('form__row--hidden', !isRunning);
   }
 
   // 08. Creating a new workout
@@ -231,7 +246,7 @@ class App {
 
     // Add new object to workout array
     this.#workouts.push(workout);
-    console.log(workout);
+    // console.log(workout);
 
     // Render workout on map as marker
     this.#renderWorkoutMarker(workout); // only need to use .bind(this) in callback functions IMP
@@ -271,7 +286,13 @@ class App {
   #renderWorkout(workout) {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
-          <h2 class="workout__title">${workout.description}</h2>
+          <h2 class="workout__title">${workout.description}
+            <div class="edit-flex">
+             <button class="crud edit">
+                <i class="fa fa-solid fa-pencil"></i>
+             </button>
+            </div>
+          </h2>
           <div class="workout__details">
             <span class="workout__icon">${
               workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
@@ -318,6 +339,9 @@ class App {
 
     form.insertAdjacentHTML('afterend', html); // added as sibling at the end of form
   }
+
+  // 12. (SELF) Edit workout button
+  // #editWorkout(workout) {}
 
   // 10. Move to marker on click
   #moveToPopup(e) {
@@ -367,7 +391,7 @@ class App {
 
     this.#workouts = data;
     this.#workouts.forEach(work => {
-      this.#renderWorkoutMarker(work);
+      this.#renderWorkout(work);
       // this.#renderWorkoutMarker(work); // doesn't work (it's called right at the beginning, before the map has even loaded)
     });
   }
@@ -376,6 +400,59 @@ class App {
   reset() {
     localStorage.removeItem('workouts');
     location.reload();
+  }
+
+  // event delegation: add event handler to parent that already exists (instead of directly on the btn that is added later with insertAdjacentHTML)
+
+  // TODO: fix cycling only having distance and duration on the workout list and general buggy feeling when switching between running/cycling on the edit,
+  // TODO add a cancel button for the editing (click on the map again or press esc)
+
+  #handleEditClick(e) {
+    const btn = e.target.closest('.edit');
+    if (!btn) return;
+
+    const workoutEl = btn.closest('.workout');
+    const workoutId = workoutEl.dataset.id;
+
+    // Find index of workout
+    const index = this.#workouts.findIndex(w => w.id === workoutId);
+    if (index === -1) return;
+
+    const workout = this.#workouts[index];
+
+    // Remove from workouts array
+    this.#workouts.splice(index, 1);
+
+    // Remove from DOM
+    workoutEl.remove();
+
+    // Re-set storage (update)
+    this.#setLocalStorage();
+
+    // Show form again
+    form.classList.remove('hidden');
+    inputDistance.focus();
+
+    // Save location for later use
+    this.#mapEvent = {
+      latlng: {
+        lat: workout.coords[0],
+        lng: workout.coords[1],
+      },
+    };
+
+    // Pre-fill form inputs
+    inputType.value = workout.type;
+    inputDistance.value = workout.distance;
+    inputDuration.value = workout.duration;
+
+    if (workout.type === 'running') {
+      inputCadence.value = workout.cadence;
+    } else if (workout.type === 'cycling') {
+      inputElevation.value = workout.elevationGain;
+    }
+
+    this.#toggleElevationField(workout.type); // show/hide relevant fields
   }
 }
 
