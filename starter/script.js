@@ -86,16 +86,20 @@ class App {
   #map;
   #mapEvent;
   #workouts = [];
+  #markers = [];
   #mapZoomLevel = 13;
 
   constructor() {
-    // immediately call this func
+    // immediately call this func on page load
 
     // Get user's position
     this.#getPosition();
 
     // Get data from local storage
     this.#getLocalStorage();
+
+    // In case last inputted event was 'cycling', it used to incorrectly show 'Cadence' instead of 'Elevation gain'. Calling this func here fixes it.
+    this.#toggleElevationField();
 
     // Attach event handlers
     form.addEventListener('submit', this.#newWorkout.bind(this)); // newWorkout is gonna point to the HTML elem it was called on (so 'form', because it is an event handler func) ==> fix it with .bind(this == App object) IMP IMP
@@ -110,6 +114,11 @@ class App {
     containerWorkouts.addEventListener(
       'click',
       this.#handleEditClick.bind(this)
+    );
+
+    containerWorkouts.addEventListener(
+      'click',
+      this.#handleDeleteButton.bind(this)
     );
   }
 
@@ -181,18 +190,15 @@ class App {
     form.classList.add('hidden');
     setTimeout(() => (form.style.display = 'grid'), 1000); // happens after 1 sec
   }
+  #toggleElevationField() {
+    const isRunning = inputType.value === 'running';
 
-  #toggleElevationField(forceType = null) {
-    const isRunning = forceType
-      ? forceType === 'running'
-      : inputType.value === 'running';
-
-    inputElevation
-      .closest('.form__row')
-      .classList.toggle('form__row--hidden', isRunning);
     inputCadence
       .closest('.form__row')
       .classList.toggle('form__row--hidden', !isRunning);
+    inputElevation
+      .closest('.form__row')
+      .classList.toggle('form__row--hidden', isRunning);
   }
 
   // 08. Creating a new workout
@@ -265,7 +271,8 @@ class App {
     // Display marker
     // 03. Displaying a marker with Leaflet
 
-    L.marker(workout.coords)
+    // Storing it in a variable to add to the markers array
+    const marker = L.marker(workout.coords)
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -280,6 +287,9 @@ class App {
         `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
       )
       .openPopup();
+
+    // Store reference with id (for deletion)
+    this.#markers.push({ id: workout.id, marker });
   }
 
   // 09. Rendering Workouts
@@ -290,6 +300,9 @@ class App {
             <div class="edit-flex">
              <button class="crud edit">
                 <i class="fa fa-solid fa-pencil"></i>
+             </button>
+             <button class="crud delete">
+                <i class="fa fa-solid fa-minus-square"></i>
              </button>
             </div>
           </h2>
@@ -323,7 +336,7 @@ class App {
           `;
 
     if (workout.type === 'cycling')
-      `
+      html += `
           <div class="workout__details">
             <span class="workout__icon">⚡️</span>
             <span class="workout__value">${workout.speed.toFixed(1)}</span>
@@ -405,6 +418,7 @@ class App {
   // event delegation: add event handler to parent that already exists (instead of directly on the btn that is added later with insertAdjacentHTML)
 
   // TODO: fix cycling only having distance and duration on the workout list and general buggy feeling when switching between running/cycling on the edit,
+  // FIXED: had to call toggleElevationField in the constructor again.
   // TODO add a cancel button for the editing (click on the map again or press esc)
 
   #handleEditClick(e) {
@@ -453,6 +467,29 @@ class App {
     }
 
     this.#toggleElevationField(workout.type); // show/hide relevant fields
+  }
+
+  #handleDeleteButton(e) {
+    const btn = e.target.closest('.delete');
+    if (!btn) return;
+
+    const workoutEl = btn.closest('.workout');
+    const workoutId = workoutEl.dataset.id;
+
+    const index = this.#workouts.findIndex(w => w.id === workoutId);
+    if (index === -1) return;
+
+    this.#workouts.splice(index, 1);
+    workoutEl.remove();
+
+    // Remove marker from map
+    const markerObj = this.#markers.find(m => m.id === workoutId);
+    if (markerObj) {
+      this.#map.removeLayer(markerObj.marker);
+      this.#markers = this.#markers.filter(m => m.id !== workoutId);
+    }
+
+    this.#setLocalStorage();
   }
 }
 
