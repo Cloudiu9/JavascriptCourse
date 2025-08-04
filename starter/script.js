@@ -80,7 +80,12 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+const innerFlexCon = document.querySelector('.inner-flex');
 const btnDeleteAll = document.querySelector('.delete-all');
+const btnSort = document.querySelector('.sort');
+
+// if this exists: show sorting button
+let data = JSON.parse(localStorage.getItem('workouts')); // ==> an array with the workout objects
 
 class App {
   #map;
@@ -120,6 +125,21 @@ class App {
       'click',
       this.#handleDeleteButton.bind(this)
     );
+
+    // Show sorting button
+    if (data && data.length > 0) {
+      // select parent
+      // insert html into .inner-flex
+      /*
+              <button class="crud sort">
+          <i class="fa fa-solid fa-sort"></i>
+        </button>
+      */
+
+      this.#renderSortBtn();
+    }
+
+    innerFlexCon.addEventListener('click', this.#handleSortButton.bind(this));
   }
 
   #getPosition() {
@@ -265,6 +285,9 @@ class App {
 
     // 11. Set local storage to all workouts
     this.#setLocalStorage();
+
+    // Display sorting button
+    this.#renderSortBtn();
   }
 
   #renderWorkoutMarker(workout) {
@@ -415,6 +438,17 @@ class App {
     location.reload();
   }
 
+  #renderSortBtn() {
+    const sortBtn = `
+        <button class="crud sort">
+          <i class="fa fa-solid fa-sort"></i>
+        </button>
+      `;
+
+    // form.insertAdjacentHTML('afterend', html); // added as sibling at the end of form
+    innerFlexCon.insertAdjacentHTML('afterbegin', sortBtn);
+  }
+
   // event delegation: add event handler to parent that already exists (instead of directly on the btn that is added later with insertAdjacentHTML)
 
   // TODO: fix cycling only having distance and duration on the workout list and general buggy feeling when switching between running/cycling on the edit,
@@ -490,6 +524,11 @@ class App {
     }
 
     this.#setLocalStorage();
+  }
+
+  #handleSortButton(e) {
+    const btn = e.target.closest('.sort');
+    if (!btn) return;
   }
 }
 
