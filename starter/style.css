@@ -7,6 +7,9 @@
   --color-light--1: #aaa;
   --color-light--2: #ececec;
   --color-light--3: rgb(214, 222, 224);
+
+  --ascending: #f7cac9;
+  --descending: #92a8d1;
 }
 
 * {
@@ -58,7 +61,47 @@ a:visited {
   align-items: end;
   justify-content: end;
   gap: 0.5rem;
+  margin-right: 3rem;
   /* pointer-events: none;  make container not clickable (so it doesn't cover the workout), not needed anymore, I put the edit button inside of the h2 */
+}
+
+.sort-container {
+  position: relative;
+}
+
+.way {
+  position: absolute;
+  top: -6rem;
+  cursor: pointer;
+  width: 100%;
+  height: 50%;
+  background-color: #f7cac9;
+  overflow: visible;
+}
+
+.way.ascending {
+  background-color: var(--ascending);
+}
+.way.descending {
+  background-color: var(--descending);
+}
+
+.sort-popup {
+  position: absolute;
+  flex-direction: column;
+  height: 5rem;
+  width: 6.5rem;
+  margin-top: 0.25rem;
+}
+
+.sort-option {
+  width: 100%;
+  height: 50%;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
 }
 
 .fa {

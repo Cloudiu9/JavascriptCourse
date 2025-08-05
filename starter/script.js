@@ -82,7 +82,6 @@ const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 const innerFlexCon = document.querySelector('.inner-flex');
 const btnDeleteAll = document.querySelector('.delete-all');
-const btnSort = document.querySelector('.sort');
 
 // if this exists: show sorting button
 let data = JSON.parse(localStorage.getItem('workouts')); // ==> an array with the workout objects
@@ -93,6 +92,7 @@ class App {
   #workouts = [];
   #markers = [];
   #mapZoomLevel = 13;
+  #sortWay = 'Ascending';
 
   constructor() {
     // immediately call this func on page load
@@ -140,6 +140,12 @@ class App {
     }
 
     innerFlexCon.addEventListener('click', this.#handleSortButton.bind(this));
+    innerFlexCon.addEventListener(
+      'click',
+      this.#handleSortOptionsButton.bind(this)
+    );
+
+    document.addEventListener('click', this.#closeSortPopup.bind(this));
   }
 
   #getPosition() {
@@ -287,7 +293,7 @@ class App {
     this.#setLocalStorage();
 
     // Display sorting button
-    this.#renderSortBtn();
+    if (!document.querySelector('.sort')) this.#renderSortBtn();
   }
 
   #renderWorkoutMarker(workout) {
@@ -373,7 +379,8 @@ class App {
         </li>
         `;
 
-    form.insertAdjacentHTML('afterend', html); // added as sibling at the end of form
+    containerWorkouts.insertAdjacentHTML('beforeend', html);
+    // form.insertAdjacentHTML('afterend', html); // added as sibling at the end of form
   }
 
   // 12. (SELF) Edit workout button
@@ -440,9 +447,16 @@ class App {
 
   #renderSortBtn() {
     const sortBtn = `
-        <button class="crud sort">
-          <i class="fa fa-solid fa-sort"></i>
-        </button>
+    <div class="sort-container">
+      <button class="crud sort">
+        <i class="fa fa-solid fa-sort"></i>
+      </button>
+      <div class="sort-popup hidden">
+        <button class="way">${this.#sortWay}</button>
+        <button class="sort-option" data-sort="distance">Distance</button>
+        <button class="sort-option" data-sort="duration">Duration</button>
+      </div>
+    </div>
       `;
 
     // form.insertAdjacentHTML('afterend', html); // added as sibling at the end of form
@@ -527,8 +541,65 @@ class App {
   }
 
   #handleSortButton(e) {
-    const btn = e.target.closest('.sort');
-    if (!btn) return;
+    const btnSort = e.target.closest('.sort');
+    if (btnSort) {
+      const popup = btnSort.parentElement.querySelector('.sort-popup');
+      popup.classList.toggle('hidden');
+      return;
+    }
+
+    const btnWay = e.target.closest('.way');
+    if (btnWay) {
+      this.#sortWay =
+        this.#sortWay === 'Ascending' ? 'Descending' : 'Ascending';
+      btnWay.textContent = this.#sortWay;
+
+      // clears both styles
+      btnWay.classList.remove('ascending', 'descending');
+
+      // adds the correct css style
+      btnWay.classList.add(this.#sortWay.toLowerCase());
+    }
+  }
+
+  #handleSortOptionsButton(e) {
+    const option = e.target.closest('.sort-option');
+    if (!option) return;
+
+    // getting the option from the button
+    const sortBy = option.dataset.sort;
+
+    // sorts ascending or descending
+    if (this.#sortWay === 'Ascending')
+      this.#workouts.sort((a, b) => a[sortBy] - b[sortBy]);
+    else this.#workouts.sort((a, b) => b[sortBy] - a[sortBy]);
+
+    // refreshes the workout list in the ordered way
+    const items = Array.from(containerWorkouts.querySelectorAll('.workout'));
+    const elById = Object.fromEntries(items.map(li => [li.dataset.id, li]));
+
+    this.#workouts.forEach(w => {
+      const li = elById[w.id];
+      if (li) containerWorkouts.appendChild(li); // this moves it
+    });
+
+    // resets the local storage
+    this.#setLocalStorage();
+
+    // hides the options button again
+    option.closest('.sort-popup').classList.add('hidden');
+  }
+
+  #closeSortPopup(e) {
+    const container = document.querySelector('.sort-container');
+    if (!container) return; // no sort in DOM
+    const popup = container.querySelector('.sort-popup');
+    if (!popup || popup.classList.contains('hidden')) return; // already closed
+
+    // if click TARGET is _not_ inside the sort-container, hide it
+    if (!container.contains(e.target)) {
+      popup.classList.add('hidden');
+    }
   }
 }
 
