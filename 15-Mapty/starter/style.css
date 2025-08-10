@@ -84,6 +84,7 @@ a:visited {
 }
 .way.descending {
   background-color: var(--descending);
+  font-size: 1.2rem;
 }
 
 .sort-popup {
