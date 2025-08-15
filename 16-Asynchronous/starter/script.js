@@ -3,6 +3,33 @@
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  // countriesContainer.style.opacity = 1;
+};
+
+const renderCountry = function (data, className = '') {
+  const html = `
+            <article class="country ${className}">
+            <img class="country__img" src="${data.flag}" />
+            <div class="country__data">
+              <h3 class="country__name">${data.name}</h3>
+              <h4 class="country__region">${data.region}</h4>
+              <p class="country__row"><span>👫</span>${(
+                data.population / 1000000
+              ).toFixed(1)} Million</p>
+              <p class="country__row"><span>🗣️</span>${
+                data.languages[0].name
+              }</p>
+              <p class="country__row"><span>💰</span>${
+                data.currencies[0].name
+              }</p>
+              </div>
+          </article>`;
+
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+};
+
 ///////////////////////////////////////
 
 // https://countries-api-836d.onrender.com/countries/
@@ -73,29 +100,6 @@ getCountryDataAndNeighbour('portugal');
 //   'https://countries-api-836d.onrender.com/countries/name/portugal'
 // );
 
-const renderCountry = function (data, className = '') {
-  const html = `
-            <article class="country ${className}">
-            <img class="country__img" src="${data.flag}" />
-            <div class="country__data">
-              <h3 class="country__name">${data.name}</h3>
-              <h4 class="country__region">${data.region}</h4>
-              <p class="country__row"><span>👫</span>${(
-                data.population / 1000000
-              ).toFixed(1)} Million</p>
-              <p class="country__row"><span>🗣️</span>${
-                data.languages[0].name
-              }</p>
-              <p class="country__row"><span>💰</span>${
-                data.currencies[0].name
-              }</p>
-              </div>
-          </article>`;
-
-  countriesContainer.insertAdjacentHTML('beforeend', html);
-  countriesContainer.style.opacity = 1;
-};
-
 // to consume fulfilled promise ==> .then() IMP
 // to read data from response ==> .json() ==> returns a NEW PROMISE IMP ==> call another .then()
 
@@ -103,7 +107,10 @@ const renderCountry = function (data, className = '') {
 const getCountryDataAndNeighbour = function (country) {
   // Country 1
   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
-    .then(response => response.json())
+    .then(
+      response => response.json()
+      // err => alert(err) // Handling (catching) rejected promises
+    )
     .then(data => {
       renderCountry(data[0]);
       const neighbour = data[0].borders?.[0]; // optional chaining
@@ -115,8 +122,21 @@ const getCountryDataAndNeighbour = function (country) {
         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
       );
     })
-    .then(response => response.json())
-    .then(data => renderCountry(data, 'neighbour'));
+    .then(
+      response => response.json()
+      // err => alert(err) // Handling (catching) rejected promises
+    )
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
+      // catch also returns a promise
+      // Handling (catching) rejected promises IMP
+      console.error(`${err} 📌`);
+      renderError(`Something went wrong. 📌 ${err.message}. Try again!`);
+    })
+    .finally(() => {
+      // Is always called regardless of promise result (either fulfillfed / rejected)
+      countriesContainer.style.opacity = 1;
+    });
 };
 
 // instead of callback hell, we have a flat chain of promises IMP
@@ -126,4 +146,16 @@ const getCountryDataAndNeighbour = function (country) {
 fetch(`https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`).then()
 */
 
-getCountryDataAndNeighbour('romania');
+btn.addEventListener('click', function () {
+  getCountryDataAndNeighbour('romania');
+});
+
+// Handling rejected promises IMP (fetch only rejects when there is no internet connection)
+// second argument of .then()
+// BETTER WAY:
+// .catch() at the end of the chain (returns a promise)
+
+// finally: always works regardless of promise result
+
+// when 404 happens, fetch promise still gets fulfilled
+// getCountryDataAndNeighbour('sssdsdsdsds');

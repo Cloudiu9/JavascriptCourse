@@ -1,0 +1,10 @@
+16. Async
+
+// Handling rejected promises IMP (fetch only rejects when there is no internet connection)
+// second argument of .then()
+// BETTER WAY:
+// .catch() at the end of the chain (returns a promise)
+
+// finally: always works regardless of promise result
+
+// when 404 happens, fetch promise still gets fulfilled
