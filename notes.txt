@@ -1,5 +1,21 @@
 16. Async
 
+// MODERN WAY OF AJAX CALLING(fetch API) IMP
+
+// returns a "Promise" IMP
+// object used as a placeholder for the future result of an asynchronous operation
+// OR a container for a future value
+
+// used to 'chain promises' ==> escaping callback hell IMP
+// const request = fetch(
+//   'https://countries-api-836d.onrender.com/countries/name/portugal'
+// );
+
+// to consume fulfilled promise ==> .then() IMP
+// to read data from response ==> .json() ==> returns a NEW PROMISE IMP ==> call another .then()
+
+// we get a 'response' ==> turn it into 'json' ==> take the 'data' and render it into DOM
+
 // Handling rejected promises IMP (fetch only rejects when there is no internet connection)
 // second argument of .then()
 // BETTER WAY:
@@ -7,4 +23,31 @@
 
 // finally: always works regardless of promise result
 
-// when 404 happens, fetch promise still gets fulfilled
+// when 404 happens, fetch promise still gets fulfilled ==> we get normal error msg IMP
+// getCountryDataAndNeighbour('sssdsdsdsds');
+// custom msg:
+/*
+      if (!response.ok)
+          // if it's false,
+          throw new Error(`Country not found. ${response.status}`);
+*/
+
+// ALWAYS use catch (and finally when necessary) to handle promises (and errors) IMP
+
+// instead of callback hell, we have a flat chain of promises IMP
+
+// ALWAYS return a NESTED promise and handle it outside, don't do this: (it still works, but you just nest callbacks)
+/*
+fetch(`https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`).then()
+*/
+
+ do this instead:
+       return fetch(
+         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+       );
+     })
+     .then()
+
+// throwing an error inside a promise makes it rejected
+      if (!neighbour) throw new Error('No neighbour found!');
+.... .catch()
