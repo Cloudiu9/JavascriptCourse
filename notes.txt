@@ -51,3 +51,21 @@ fetch(`https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`).th
 // throwing an error inside a promise makes it rejected
       if (!neighbour) throw new Error('No neighbour found!');
 .... .catch()
+
+IMP
+Async code works with the help of the callback queue, event loop and call stack. AND with an extra queue called the "MICROTASKS QUEUE" (filled with PROMISES .then(res => console.log(res)) ) that has priority over the normal callbacks from the callbacks queue. The event loop 'ticks', putting promises from the microtasks queue first, then callbacks from the callback queue into the call stack to be executed.
+
+IMP
+Async code in JS uses call stack + event loop + task queues. There are two queues:
+
+Microtasks queue (Promises, queueMicrotask, MutationObserver) → runs first, drained completely.
+
+Macro/callback queue (setTimeout, setInterval, I/O, DOM events) → runs only after microtasks are done.
+
+The event loop continuously checks the call stack → if empty, it moves tasks from queues:
+
+First drain all microtasks.
+
+Then take one macro task.
+
+Repeat.
