@@ -216,7 +216,7 @@ TEST COORDINATES 2: -33.933, 18.474
 
 GOOD LUCK 😀
 */
-
+/*
 const whereAmI = function (lat, lng) {
   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json${AUTH}`)
     .then(response => {
@@ -254,3 +254,25 @@ const whereAmI = function (lat, lng) {
 whereAmI(52.508, 13.381);
 whereAmI(19.037, 72.873);
 whereAmI(-33.933, 18.474);
+*/
+
+// Event loop in practice
+// (microtasks queue)
+// ==> result: test, test end, resolved promise 1, resolved promise 2, 0 sec timer
+// ==> 0 seconds in the timer are not guaranteed (because of microtasks queue)
+
+console.log('Test'); // 1
+setTimeout(() => {
+  console.log('0 sec timer'); // 4
+}, 0);
+
+Promise.resolve('Resolved promise 1').then(res => console.log(res)); // 3
+
+// promise is solved immediately, but the callback is queued in the microtasks queue
+Promise.resolve('Resolved promise 2').then(res => {
+  for (i = 0; i < 1000000000; i++) {} // blocking the main thread
+
+  console.log(res);
+});
+
+console.log('Test end'); // 2
