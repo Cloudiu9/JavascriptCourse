@@ -256,11 +256,12 @@ whereAmI(19.037, 72.873);
 whereAmI(-33.933, 18.474);
 */
 
-// Event loop in practice
+// Event loop in practice IMP
 // (microtasks queue)
 // ==> result: test, test end, resolved promise 1, resolved promise 2, 0 sec timer
 // ==> 0 seconds in the timer are not guaranteed (because of microtasks queue)
 
+/*
 console.log('Test'); // 1
 setTimeout(() => {
   console.log('0 sec timer'); // 4
@@ -276,3 +277,71 @@ Promise.resolve('Resolved promise 2').then(res => {
 });
 
 console.log('Test end'); // 2
+*/
+
+// Building a Promise IMP
+// promise(executor function(resolve, reject)) == just a special kind of object
+
+rndNum = Math.random();
+
+const lotteryPromise = new Promise(function (resolve, reject) {
+  console.log('Lottery draw is happening.');
+  setTimeout(function () {
+    if (rndNum >= 0.5) {
+      // marks promise as fulfilled (or RESOLVED)
+      // w/e value we pass into this, ==> result of the promise from the then()
+      resolve(`You Win. (${rndNum})`);
+    } else {
+      // marks promise as rejected
+      // error message caught by the catch() handler
+      // reject(new Error object (string to pass to .catch()))
+      reject(new Error(`You lost. (${rndNum})`));
+    }
+  }, 2000);
+});
+
+// calling .then() on a promise object
+
+// IMP
+// if successful => 'You Win.'
+// if failed => 'You lost.'
+lotteryPromise
+  .then(result => {
+    console.log(result);
+  })
+  .catch(err => {
+    console.error(err);
+  });
+
+// Most of the time we only consume promises (with .then)
+// only build promises to wrap old callback based functions into promises (PROMISIFYING) IMP
+
+// function that returns a promise (like .fetch())
+// Promisifying setTimeout
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000); // we only want to make our code wait, no need for resolved values
+  });
+};
+
+wait(1)
+  .then(() => {
+    console.log('Waited for 1 sec.');
+    return wait(2);
+  })
+  .then(() => {
+    console.log('Waited for 2 sec');
+    return wait(3);
+  })
+  .then(() => {
+    console.log('Waited for 3 sec');
+    return wait(4);
+  })
+  .then(() => {
+    console.log('Waited for 4 sec');
+  });
+
+// static method on Promise constructor
+// resolves immediately
+Promise.resolve('abc').then(x => console.log(x));
+Promise.reject(new Error('Error!')).catch(x => console.error(x));

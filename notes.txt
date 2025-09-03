@@ -69,3 +69,14 @@ First drain all microtasks.
 Then take one macro task.
 
 Repeat.
+
+// Most of the time we only consume promises (with .then)
+// only build promises to wrap old callback based functions into promises (PROMISIFYING) IMP
+
+// function that returns a promise (like .fetch())
+// Promisifying setTimeout
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000); // we only want to make our code wait, no need for resolved values
+  });
+};
