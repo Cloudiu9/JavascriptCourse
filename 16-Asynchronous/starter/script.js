@@ -9,24 +9,26 @@ const renderError = function (msg) {
   // countriesContainer.style.opacity = 1;
 };
 
+// Fix function to work with new API
 const renderCountry = function (data, className = '') {
   const html = `
-            <article class="country ${className}">
-            <img class="country__img" src="${data.flag}" />
-            <div class="country__data">
-              <h3 class="country__name">${data.name}</h3>
-              <h4 class="country__region">${data.region}</h4>
-              <p class="country__row"><span>👫</span>${(
-                data.population / 1000000
-              ).toFixed(1)} Million</p>
-              <p class="country__row"><span>🗣️</span>${
-                data.languages[0].name
-              }</p>
-              <p class="country__row"><span>💰</span>${
-                data.currencies[0].name
-              }</p>
-              </div>
-          </article>`;
+<article class="country ${className}">
+  <img class="country__img" src="${data.flags.svg}" />
+  <div class="country__data">
+    <h3 class="country__name">${data.name.common}</h3>
+    <h4 class="country__region">${data.region}</h4>
+    <p class="country__row"><span>👫</span>${(
+      data.population / 1_000_000
+    ).toFixed(1)} Million</p>
+    <p class="country__row"><span>🗣️</span>${
+      Object.values(data.languages)[0]
+    }</p>
+    <p class="country__row"><span>💰</span>${
+      Object.values(data.currencies)[0].name
+    }</p>
+  </div>
+</article>
+`;
 
   countriesContainer.insertAdjacentHTML('beforeend', html);
 };
@@ -157,38 +159,42 @@ const getJSON = function (url, errorMsg = 'Something went wrong.') {
 // cleaner version 3 with helper function
 const getCountryDataAndNeighbour = function (country) {
   // Country 1
-  getJSON(
-    `https://countries-api-836d.onrender.com/countries/name/${country}`,
-    'Country not found'
-  )
+  getJSON(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
     .then(data => {
       renderCountry(data[0]);
-      const neighbour = data[0].borders?.[0]; // optional chaining
 
-      if (!neighbour) throw new Error('No neighbour found!');
+      const neighbours = data[0].borders;
+      if (!neighbours || neighbours.length === 0)
+        throw new Error('No neighbours found!');
 
-      // Country 2
-      return getJSON(
-        `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`,
-        'Country not found'
+      // Fetch ALL neighbours in parallel
+      return Promise.all(
+        neighbours.map(code =>
+          getJSON(
+            `https://restcountries.com/v3.1/alpha/${code}`,
+            'Country not found'
+          )
+        )
       );
     })
-    .then(data => renderCountry(data, 'neighbour'))
+    .then(dataArr => {
+      // Each neighbour response is an array of [ { countryObj } ]
+      dataArr.forEach(neighbourData => {
+        renderCountry(neighbourData[0], 'neighbour');
+      });
+    })
     .catch(err => {
-      // catch also returns a promise
-      // Handling (catching) rejected promises IMP
       console.error(`${err} 📌`);
       renderError(`Something went wrong. 📌 ${err.message}. Try again!`);
     })
     .finally(() => {
-      // Is always called regardless of promise result (either fulfillfed / rejected)
       countriesContainer.style.opacity = 1;
     });
 };
 
-btn.addEventListener('click', function () {
-  getCountryDataAndNeighbour('romania');
-});
+// btn.addEventListener('click', function () {
+// getCountryDataAndNeighbour('romania');
+// });
 
 ///////////////////////////////////////
 // Coding Challenge #1
@@ -281,7 +287,7 @@ console.log('Test end'); // 2
 
 // Building a Promise IMP
 // promise(executor function(resolve, reject)) == just a special kind of object
-
+/*
 rndNum = Math.random();
 
 const lotteryPromise = new Promise(function (resolve, reject) {
@@ -345,3 +351,64 @@ wait(1)
 // resolves immediately
 Promise.resolve('abc').then(x => console.log(x));
 Promise.reject(new Error('Error!')).catch(x => console.error(x));
+*/
+
+// Promisifying the Geolocation API IMP
+// Async
+
+// promisifying a callback based API to a promise based API
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(
+    //   position => resolve(position),
+    //   err => reject(err)
+    // );
+
+    // same thing:
+    // resolve is the callback fn which gets called with the position
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+// getPosition().then(pos => console.log(pos));
+
+// modifying old challenge code to work without passing in lat, lng, only the geoloc API
+const whereAmI = function () {
+  getPosition()
+    .then(pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json${AUTH}`);
+    })
+    .then(response => {
+      if (response.status === 403)
+        throw new Error(
+          `Please wait another second before refreshing. ${response.status}`
+        );
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      console.log(`You are in ${data.city}, ${data.country}`);
+
+      return fetch(`https://restcountries.com/v3.1/name/${data.country}`);
+    })
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      console.log(data[0]);
+      renderCountry(data[0]);
+    })
+    .catch(err => {
+      console.error(err);
+      console.log(
+        `Please wait another second before refreshing. ${err.message}`
+      );
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
+};
+
+btn.addEventListener('click', whereAmI);
