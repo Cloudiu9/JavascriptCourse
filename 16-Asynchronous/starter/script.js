@@ -1,5 +1,5 @@
 ('use strict');
-// import { AUTH } from './config.js';
+import { AUTH } from './config.js';
 
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
@@ -30,6 +30,7 @@ const renderCountry = function (data, className = '') {
 </article>
 `;
 
+  countriesContainer.style.opacity = 1;
   countriesContainer.insertAdjacentHTML('beforeend', html);
 };
 
@@ -439,6 +440,7 @@ TEST DATA: Images in the img folder. Test the error handler by passing a wrong i
 
 GOOD LUCK 😀
 */
+/*
 
 const wait = function (seconds) {
   return new Promise(function (resolve) {
@@ -488,3 +490,43 @@ createImage('img/img-1.jpg')
     currentImage.style.display = 'none';
   })
   .catch(err => console.error(err));
+  */
+
+// Async/Await (consuming promises)
+// add 'async' before 'function' ==> asynchronous (keeps running in the background while perf code inside of it, returns a promise automatically IMP)
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+const whereAmI = async function () {
+  // Geolocation
+  const pos = await getPosition();
+  const { latitude: lat, longitude: lng } = pos.coords;
+
+  // Reverse geocoding
+  const resGeo = await fetch(
+    `https://geocode.xyz/${lat},${lng}?geoit=json${AUTH}`
+  );
+  const dataGeo = await resGeo.json();
+  console.log(dataGeo);
+
+  // Country data
+  // await stops exec at this point of the func until the promise is fulfilled (doesn't block the exec of the whole code, because function is async IMP)
+  const res = await fetch(
+    `https://restcountries.com/v3.1/name/${dataGeo.country}`
+  );
+  console.log(res);
+
+  // SAME AS: (but async/await is cleaner)
+  // fetch(`https://restcountries.com/v3.1/name/${country}`).then(res => console.log(res);)
+
+  const data = await res.json();
+  console.log(data[0]);
+  renderCountry(data[0]);
+};
+
+whereAmI();
+console.log('First');
