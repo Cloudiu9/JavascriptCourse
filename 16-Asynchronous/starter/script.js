@@ -502,31 +502,44 @@ const getPosition = function () {
 };
 
 const whereAmI = async function () {
-  // Geolocation
-  const pos = await getPosition();
-  const { latitude: lat, longitude: lng } = pos.coords;
+  try {
+    // Geolocation
+    // doesn't need manual error handling (because of promisifying)
+    const pos = await getPosition();
+    const { latitude: lat, longitude: lng } = pos.coords;
 
-  // Reverse geocoding
-  const resGeo = await fetch(
-    `https://geocode.xyz/${lat},${lng}?geoit=json${AUTH}`
-  );
-  const dataGeo = await resGeo.json();
-  console.log(dataGeo);
+    // Reverse geocoding
+    const resGeo = await fetch(
+      `https://geocode.xyz/${lat},${lng}?geoit=json${AUTH}`
+    );
+    // need to throw errors manually because this only gets rejected if user doesn't have internet
+    // if 403/404, promise does not reject
+    if (!resGeo.ok) throw new Error('Problem getting location data');
 
-  // Country data
-  // await stops exec at this point of the func until the promise is fulfilled (doesn't block the exec of the whole code, because function is async IMP)
-  const res = await fetch(
-    `https://restcountries.com/v3.1/name/${dataGeo.country}`
-  );
-  console.log(res);
+    const dataGeo = await resGeo.json();
+    console.log(dataGeo);
 
-  // SAME AS: (but async/await is cleaner)
-  // fetch(`https://restcountries.com/v3.1/name/${country}`).then(res => console.log(res);)
+    // Country data
+    // await stops exec at this point of the func until the promise is fulfilled (doesn't block the exec of the whole code, because function is async IMP)
+    const res = await fetch(
+      `https://restcountries.com/v3.1/name/${dataGeo.country}`
+    );
+    if (!res.ok) throw new Error('Problem getting country');
+    console.log(res);
 
-  const data = await res.json();
-  console.log(data[0]);
-  renderCountry(data[0]);
+    // SAME AS: (but async/await is cleaner)
+    // fetch(`https://restcountries.com/v3.1/name/${country}`).then(res => console.log(res);)
+
+    const data = await res.json();
+    console.log(data[0]);
+    renderCountry(data[0]);
+  } catch (err) {
+    console.err(err);
+    renderError(`💥 ${err.message}`);
+  }
 };
 
 whereAmI();
 console.log('First');
+
+// Using try/catch for error handling with async/await IMP

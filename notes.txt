@@ -80,3 +80,10 @@ const wait = function (seconds) {
     setTimeout(resolve, seconds * 1000); // we only want to make our code wait, no need for resolved values
   });
 };
+
+// add 'async' before 'function' ==> asynchronous (keeps running in the background while perf code inside of it, returns a promise automatically IMP)
+
+
+// Using try/catch for error handling with async/await IMP
+
+// ASYNC CODE SHOULD ALWAYS HAVE ERROR HANDLNIG IMP IMP
