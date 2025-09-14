@@ -517,7 +517,7 @@ const whereAmI = async function () {
     if (!resGeo.ok) throw new Error('Problem getting location data');
 
     const dataGeo = await resGeo.json();
-    console.log(dataGeo);
+    // console.log(dataGeo);
 
     // Country data
     // await stops exec at this point of the func until the promise is fulfilled (doesn't block the exec of the whole code, because function is async IMP)
@@ -531,15 +531,49 @@ const whereAmI = async function () {
     // fetch(`https://restcountries.com/v3.1/name/${country}`).then(res => console.log(res);)
 
     const data = await res.json();
-    console.log(data[0]);
+    // console.log(data[0]);
     renderCountry(data[0]);
+
+    // fullfilled value of the promise IMP
+    return `You are in ${dataGeo.city}. ${dataGeo.country}`;
   } catch (err) {
     console.err(err);
     renderError(`💥 ${err.message}`);
+
+    // reject promise returned from async function
+    throw err;
   }
 };
 
-whereAmI();
-console.log('First');
+console.log('1. Getting Location');
+// const city = whereAmI(); // executes last because async
+// console.log(city); // (doesn't work) returns a promise (async always returns a promise)
+
+// whereAmI()
+//   .then(city => console.log(`2: ${city}`))
+//   .catch(err => console.err(`2: ${err.message}`))
+//   .finally(() => {
+//     console.log('3. Finished getting location.'); // put in finally() to keep 1,2,3 order
+//   }); // (works) returns the string (because 'city' from .then() is the returned value of the promise)
 
 // Using try/catch for error handling with async/await IMP
+
+// IIFE (immediately invoked function expression)
+
+/*
+   const res = await fetch(
+      `https://restcountries.com/v3.1/name/${dataGeo.country}`
+    );
+    // SAME AS: (but async/await is cleaner)
+    // fetch(`https://restcountries.com/v3.1/name/${country}`).then(res => console.log(res);)
+*/
+
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(`2: ${city}`);
+  } catch (err) {
+    console.err(err);
+  }
+  console.log('3. Finished getting location.');
+})();

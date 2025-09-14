@@ -87,3 +87,10 @@ const wait = function (seconds) {
 // Using try/catch for error handling with async/await IMP
 
 // ASYNC CODE SHOULD ALWAYS HAVE ERROR HANDLNIG IMP IMP
+
+// JS can't know what the return of the func is because it's still running, so it returns a promise (async)
+
+console.log('1. Getting Location');
+const city = whereAmI(); // executes last because async
+console.log(city); // returns a promise (async always returns a promise)
+console.log('3. Finished getting location.');
