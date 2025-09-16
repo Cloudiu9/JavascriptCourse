@@ -494,7 +494,7 @@ createImage('img/img-1.jpg')
 
 // Async/Await (consuming promises)
 // add 'async' before 'function' ==> asynchronous (keeps running in the background while perf code inside of it, returns a promise automatically IMP)
-
+/*
 const getPosition = function () {
   return new Promise(function (resolve, reject) {
     navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -544,8 +544,8 @@ const whereAmI = async function () {
     throw err;
   }
 };
-
-console.log('1. Getting Location');
+*/
+// console.log('1. Getting Location');
 // const city = whereAmI(); // executes last because async
 // console.log(city); // (doesn't work) returns a promise (async always returns a promise)
 
@@ -568,6 +568,7 @@ console.log('1. Getting Location');
     // fetch(`https://restcountries.com/v3.1/name/${country}`).then(res => console.log(res);)
 */
 
+/*
 (async function () {
   try {
     const city = await whereAmI();
@@ -577,3 +578,32 @@ console.log('1. Getting Location');
   }
   console.log('3. Finished getting location.');
 })();
+*/
+
+// Running promises in parallel
+
+const get3Countries = async function (c1, c2, c3) {
+  try {
+    // this works, but it runs in sequence (slower)
+    // parallel would save loading time IMP
+    // const [data1] = await getJSON(`https://restcountries.com/v3.1/name/${c1}`);
+    // const [data2] = await getJSON(`https://restcountries.com/v3.1/name/${c2}`);
+    // const [data3] = await getJSON(`https://restcountries.com/v3.1/name/${c3}`);
+    // console.log([data1.capital, data2.capital, data3.capital]);
+
+    // parallel:
+    // returns a new promise that runs all promises at the same time
+    // if one promise rejects ==> all reject (promise.all short circuits) IMP
+    const data = await Promise.all(
+      `https://restcountries.com/v3.1/name/${c1}`,
+      `https://restcountries.com/v3.1/name/${c2}`,
+      `https://restcountries.com/v3.1/name/${c3}`
+    );
+
+    console.log(data.map(d => d[0].capital));
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+get3Countries('portugal', 'romania', 'canada');
