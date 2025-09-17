@@ -581,7 +581,7 @@ const whereAmI = async function () {
 */
 
 // Running promises in parallel
-
+/*
 const get3Countries = async function (c1, c2, c3) {
   try {
     // this works, but it runs in sequence (slower)
@@ -607,3 +607,169 @@ const get3Countries = async function (c1, c2, c3) {
 };
 
 get3Countries('portugal', 'romania', 'canada');
+*/
+
+// Other Promise combinators IMP
+// still runs in parallel
+
+// Promise.race (receives promises => returns ONE promise when one is settled (short circuits) (first settled promise wins the race IMP))
+// if a fulfilled promise wins => it returns the fulfillment
+/*
+(async function () {
+  const res = await Promise.race([
+    getJSON(`https://restcountries.com/v3.1/name/italy`),
+    getJSON(`https://restcountries.com/v3.1/name/egypt`),
+    getJSON(`https://restcountries.com/v3.1/name/mexico`),
+  ]);
+})();
+
+// very useful to prevent never ending promises (or very long)
+
+const timeout = function (sec) {
+  return new Promise(function (_, reject) {
+    setTimeout(() => {
+      reject(new Error('Request took too long!'));
+    }, sec * 1000);
+  });
+};
+
+Promise.race([
+  getJSON(`https://restcountries.com/v3.1/name/tanzania`),
+  timeout(5),
+])
+  .then(res => console.log(res[0]))
+  .catch(err => console.error(err));
+
+// Promise.allSettled
+// takes an array of promises, returns an array of all settled promises (similar to Promise.all, but NEVER short circuits)
+Promise.allSettled([
+  Promise.resolve('Success'),
+  Promise.reject('Error!'),
+  Promise.resolve('Success #2'),
+]).then(res => console.log(res));
+
+// Promise.any
+// takes an array of promises, returns the FIRST fulfilled promise, ignores rejected promises (similar to race, but ignores rejects)
+
+Promise.any([
+  // Promise.resolve('Success'),
+  Promise.reject('Error!'),
+  Promise.resolve('Success #2'),
+]).then(res => console.log(res));
+*/
+
+///////////////////////////////////////
+// Coding Challenge #3
+
+/* 
+PART 1
+Write an async function 'loadNPause' that recreates Coding Challenge #2, this time using async/await (only the part where the promise is consumed). Compare the two versions, think about the big differences, and see which one you like more.
+Don't forget to test the error handler, and to set the network speed to 'Fast 3G' in the dev tools Network tab.
+
+PART 2
+1. Create an async function 'loadAll' that receives an array of image paths 'imgArr';
+2. Use .map to loop over the array, to load all the images with the 'createImage' function (call the resulting array 'imgs')
+3. Check out the 'imgs' array in the console! Is it like you expected?
+4. Use a promise combinator function to actually get the images from the array 😉
+5. Add the 'paralell' class to all the images (it has some CSS styles).
+
+TEST DATA: ['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']. To test, turn off the 'loadNPause' function.
+
+GOOD LUCK 😀
+*/
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+const imgContainer = document.querySelector('.images');
+
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const img = document.createElement('img');
+    img.src = imgPath;
+
+    img.addEventListener('load', function () {
+      imgContainer.append(img);
+      resolve(img);
+    });
+
+    img.addEventListener('error', function () {
+      reject(new Error('Image not found'));
+    });
+  });
+};
+
+let currentImg;
+
+// createImage('img/img-1.jpg')
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 1 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+//     return createImage('img/img-2.jpg');
+//   })
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 2 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+//   })
+//   .catch(err => console.error(err));
+
+const loadNPause = async function () {
+  try {
+    // don't need to use a global variable (currentImg) since we're in the same code block, but this still works
+    const img1 = await createImage('img/img-1.jpg');
+    currentImg = img1;
+    console.log('Image 1 loaded');
+    await wait(2);
+
+    currentImg.style.display = 'none';
+    const img2 = await createImage('img/img-2.jpg');
+    currentImg = img2;
+    console.log('Image 2 loaded');
+    await wait(2);
+
+    currentImg.style.display = 'none';
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// loadNPause();
+
+/*
+PART 2
+1. Create an async function 'loadAll' that receives an array of image paths 'imgArr';
+2. Use .map to loop over the array, to load all the images with the 'createImage' function (call the resulting array 'imgs')
+3. Check out the 'imgs' array in the console! Is it like you expected?
+4. Use a promise combinator function to actually get the images from the array 😉
+5. Add the 'paralell' class to all the images (it has some CSS styles).
+
+TEST DATA: ['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']. To test, turn off the 'loadNPause' function.
+*/
+
+// const imagesEl = document.querySelector('.images');
+// console.log(imagesEl.childNodes);
+// const imagesChildren = imagesEl.childNodes;
+
+const loadAll = async function (imgArr) {
+  const imgs = imgArr.map(async imgs => await createImage(imgs));
+  console.log(imgs);
+
+  const imgsP = await Promise.all(imgs);
+  console.log(imgsP);
+
+  // imagesChildren.forEach(img => img.classList.add('parallel'));
+  imgsP.forEach(img => img.classList.add('parallel'));
+};
+
+loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);

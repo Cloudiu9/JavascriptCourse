@@ -133,3 +133,21 @@ const get3Countries = async function (c1, c2, c3) {
     console.log(err);
   }
 };
+
+// MOST IMPORTANT PROMISE COMBINATORS
+// Promise.race()
+// Promise.all()
+
+
+// Promise.race (receives promises => returns ONE promise when one is settled (short circuits) (first settled promise wins the race IMP))
+// if a fulfilled promise wins => it returns the fulfillment
+
+(async function () {
+  const res = await Promise.race([
+    getJSON(`https://restcountries.com/v3.1/name/italy`),
+    getJSON(`https://restcountries.com/v3.1/name/egypt`),
+    getJSON(`https://restcountries.com/v3.1/name/mexico`),
+  ]);
+})();
+
+// very useful to prevent never ending promises (or very long)
