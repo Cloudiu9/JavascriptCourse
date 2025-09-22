@@ -151,3 +151,37 @@ const get3Countries = async function (c1, c2, c3) {
 })();
 
 // very useful to prevent never ending promises (or very long)
+
+
+17. Modern JS 
+
+// modules get executed first (hoisted up)
+
+// all top level variables are private to the module itself
+
+export const addToCart = function (product, quantity) {
+  cart.push(product, quantity);
+  console.log(`${quantity} ${product} added to cart`);
+};
+
+// named imports: have to have same name, curly braces IMP
+// import { addToCart, totalPrice as price, qt } from './shoppingCart';
+
+
+// creating an object that contains every import IMP
+// like exporting a public API as a class
+// import * as ShoppingCart from './shoppingCart.js';
+// ShoppingCart.addToCart('bread', 5);
+
+
+// DEFAULT EXPORTS
+// used when exporting only 1 thing per module
+
+export default function (product, quantity) {
+  cart.push(product, quantity);
+  console.log(`${quantity} ${product} added to cart`);
+}
+
+// imports the DEFAULT EXPORT, no matter what it's called IMP
+// we CAN mix both exports, but it's not advised IMP
+// import add, { addToCart, totalPrice as price, qt } from './shoppingCart.js';
