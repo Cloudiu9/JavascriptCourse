@@ -155,6 +155,8 @@ const get3Countries = async function (c1, c2, c3) {
 
 17. Modern JS 
 
+// using a module bundler is very IMPortant
+
 // modules get executed first (hoisted up)
 
 // all top level variables are private to the module itself
@@ -185,3 +187,5 @@ export default function (product, quantity) {
 // imports the DEFAULT EXPORT, no matter what it's called IMP
 // we CAN mix both exports, but it's not advised IMP
 // import add, { addToCart, totalPrice as price, qt } from './shoppingCart.js';
+
+// // Top level await: can use await outside of async ONLY in modules IMP
