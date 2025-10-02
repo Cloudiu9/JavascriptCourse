@@ -90,3 +90,8 @@ const ShoppingCart2 = (function () {
 
 ShoppingCart2.addToCart('apples', 4);
 ShoppingCart2.addToCart('pizzas', 2);
+
+const arr = [1, 2, 3, 4, 10, 14];
+
+const sorted = arr.sort((a, b) => a - b);
+console.log(sorted);

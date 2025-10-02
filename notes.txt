@@ -189,3 +189,13 @@ export default function (product, quantity) {
 // import add, { addToCart, totalPrice as price, qt } from './shoppingCart.js';
 
 // // Top level await: can use await outside of async ONLY in modules IMP
+
+// IMPorant console (cmd) commands:
+
+cd..
+cd + tab
+dir 
+mkdir TEST (make a folder)
+copy nul index.html (make a file)
+del TEST (removes files from test folder)
+rmdir TEST (remove an EMPTY folder)
