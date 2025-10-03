@@ -199,3 +199,9 @@ mkdir TEST (make a folder)
 copy nul index.html (make a file)
 del TEST (removes files from test folder)
 rmdir TEST (remove an EMPTY folder)
+
+// IMPortant npm commands:
+
+npm i 'package'
+npm un 'package'
+npm i (no package name => installs all package dependancies from package.json)

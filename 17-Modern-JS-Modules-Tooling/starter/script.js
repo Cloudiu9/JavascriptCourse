@@ -95,3 +95,20 @@ const arr = [1, 2, 3, 4, 10, 14];
 
 const sorted = arr.sort((a, b) => a - b);
 console.log(sorted);
+
+import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
+
+const state = {
+  cart: [
+    { product: 'pizza', quantity: 5 },
+    { product: 'bread', quantity: 5 },
+  ],
+  user: { loggedIn: true },
+};
+
+const stateClone = Object.assign({}, state);
+console.log(stateClone);
+const deepClone = cloneDeep(state);
+state.user.loggedIn = false;
+console.log(stateClone); // also changes to false (shallow copy, bad idea)
+console.log(deepClone); // remains true (deep copy, good)
