@@ -205,3 +205,36 @@ rmdir TEST (remove an EMPTY folder)
 npm i 'package'
 npm un 'package'
 npm i (no package name => installs all package dependancies from package.json)
+
+lodash/leaftet/other libraries are NORMAL dependancies
+
+PARCEL/other bundlers/tools are devDependencies (not actually used in the code, but still necessary, just another CLI)
+
+use parcel (installed locally): IMP (works with all commonjs modules)
+1. npx (application built into npm)
+npx parcel index.html (index is the 'entry point' ==> where we include script.js)
+2. npm script
+(in package.json:
+  "scripts": {
+    "start": "parcel index.html"
+  },
+)
+then: npm run start
+
+// goal of using parcel here: bundle three modules together (script, shoppingCart, clonedeep)
+parcel creates a 'dist' (distribution) folder ==> send it for production (code in this folder is sent to final users, combines all modules into 1 script file IMP)
+
+doesn't refresh the whole page when changing a module: IMP (saves logged in state, etc)
+if (module.hot) {
+  module.hot.accept();
+}
+
+// when we are done developing the project, we build the FINAL BUNDLE (compressed, deadcode elimination) IMP
+(in package.json)
+  "scripts": {
+    "build": "parcel build index.html"
+  },
+
+// install globally: (doesn't need the intermediate step of an npm script)
+// installing locally is recommended (to stay updated)
+npm i parcel -g

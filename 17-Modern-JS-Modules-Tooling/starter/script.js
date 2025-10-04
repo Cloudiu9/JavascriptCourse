@@ -51,8 +51,11 @@ console.log(lastPost);
 lastPost.then(last => console.log(last));
 
 // fix: top level await
-const lastPost2 = await getLastPost();
-console.log(lastPost2);
+// wrap it in an async IIFE to fix parcel error
+(async () => {
+  const lastPost2 = await getLastPost();
+  console.log(lastPost2);
+})();
 
 // Old module pattern (before ES6)
 // reason to use: encapsulate data, private data, expose public API
@@ -96,7 +99,8 @@ const arr = [1, 2, 3, 4, 10, 14];
 const sorted = arr.sort((a, b) => a - b);
 console.log(sorted);
 
-import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
+// import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
+import cloneDeep from 'lodash-es';
 
 const state = {
   cart: [
@@ -112,3 +116,7 @@ const deepClone = cloneDeep(state);
 state.user.loggedIn = false;
 console.log(stateClone); // also changes to false (shallow copy, bad idea)
 console.log(deepClone); // remains true (deep copy, good)
+
+if (module.hot) {
+  module.hot.accept();
+}
