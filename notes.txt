@@ -238,3 +238,23 @@ if (module.hot) {
 // install globally: (doesn't need the intermediate step of an npm script)
 // installing locally is recommended (to stay updated)
 npm i parcel -g
+
+
+IMP
+
+// Babel can only convert/transpile ES6 Syntax (arrow functions, classes, const, spread operator), NOT things like promises, .find(), we need to POLYFILL those IMP
+
+polyfill everything: import 'core-js/stable' (usually used, but higher bundle size)
+polyfill promise specifically: import 'core-js/stable/promise'
+polyfilling async functions: import 'regenerator-runtime/runtime';
+
+always install renegerator-runtme
+npm i regenerator-runtime
+
+IMP
+like following a recipe:
+
+parcel = bundler (parcel automatically uses babel)
+babel = transpiler (turns modern code back into es5)
+polyfill with core-js/stable
+async functions with regenerator-runtime/runtime
