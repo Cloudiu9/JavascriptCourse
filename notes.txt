@@ -258,3 +258,40 @@ parcel = bundler (parcel automatically uses babel)
 babel = transpiler (turns modern code back into es5)
 polyfill with core-js/stable
 async functions with regenerator-runtime/runtime
+
+IMPERATIVE vs DECLARATIVE paradigms
+
+IMPERATIVE:
+- programmer explains HOW to do things (step-by-step recipe of a cake)
+
+const arr = [2,4,6,8]
+const doubled = []
+
+for(let i =0; i < arr.length, i++)
+doubled[i] = arr[i] * 2
+
+DECLARATIVE:
+- programmer tells WHAT to do (description of a cake)
+- steps are abstracted away (more modern)
+
+const arr = [2,4,6,8]
+const doubled = arr.map(n => n * 2)
+
+FUNCTIONAL PARADIGM (React is based on this) IMP
+- Declarative programming paradigm
+- idea of combining many pure functions, avoiding side effects and mutating data
+- side effect: modification (mutation) of any data OUTSIDE of the function (mutating external variables, logging to console, writing to DOM, etc.)
+- pure function: no side effects, doesn't depend on external variables (given the same inputs, always returns same outputs)
+- immutability: state(data) is never modified, instead state is copied and the copy is mutated and returned
+
+func progr techniques: IMP
+- try to avoid data mutations
+- use built-in methods that don't produce side effects
+- .map(), .filter(), .reduce()
+- try to avoid side effects in functions
+
+Declarative Syntax:
+- array and object destructuring
+- use spread, ternary operator, template literals
+
+We ALWAYS need some side effects (console.log, etc.), but push them to the end 
