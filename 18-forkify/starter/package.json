@@ -1,0 +1,15 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "Recipe application",
+  "scripts": {
+    "start": "parcel index.html && parcel watch index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "Claudiu Bordea",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.16.0",
+    "parcel": "^2.16.0"
+  }
+}

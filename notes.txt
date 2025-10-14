@@ -152,6 +152,25 @@ const get3Countries = async function (c1, c2, c3) {
 
 // very useful to prevent never ending promises (or very long)
 
+IMPORTANT:
+template to use for basic ajax calls:
+
+const showRecipe = async function () {
+  try {
+    const res = await fetch(
+      'https://forkify-api.jonas.io/api/v2/recipes/5ed6604591c37cdc054bc886'
+    );
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+
+    console.log(res, data);
+  } catch (err) {
+    alert(err);
+  }
+};
+
+
 
 17. Modern JS 
 
@@ -295,3 +314,7 @@ Declarative Syntax:
 - use spread, ternary operator, template literals
 
 We ALWAYS need some side effects (console.log, etc.), but push them to the end 
+
+SASS (sassy css)
+- better way of writing css for large apps
+- browser doesn't understand it directly, so Parcel converts it
