@@ -1,3 +1,7 @@
+// importing named exports from the model
+import * as model from './model.js';
+import recipeView from './views/recipeView.js';
+
 // import icons from '../img/icons.svg' // parcel 1
 // fixing old icons from template string
 import icons from 'url:../img/icons.svg'; // parcel 2
@@ -40,35 +44,17 @@ const showRecipe = async function () {
 
     if (!id) return;
 
+    renderSpinner(recipeContainer);
     // Loading recipe
 
-    renderSpinner(recipeContainer);
-
-    const res = await fetch(
-      // 'https://forkify-api.jonas.io/api/v2/recipes/5ed6604591c37cdc054bc886'
-      `https://forkify-api.jonas.io/api/v2/recipes/${id}`
-    );
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
-    // console.log(res, data);
-    let { recipe } = data.data; // destructuring since data.data.recipe exists
-    // remaking the recipe object to change formatting
-    recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    };
-
-    console.log(recipe);
+    // is an async func inside of another async func ==> needs await
+    // does not return anyhthing, doesn't need to be stored in a variable (instead makes recipe available)
+    await model.loadRecipe(id);
+    const { recipe } = model.state;
 
     // Rendering recipe
+    recipeView.render(model.state.recipe);
+
     const markup = `
         <figure class="recipe__fig">
           <img src="${recipe.image}" alt="${

@@ -318,3 +318,6 @@ We ALWAYS need some side effects (console.log, etc.), but push them to the end
 SASS (sassy css)
 - better way of writing css for large apps
 - browser doesn't understand it directly, so Parcel converts it
+
+// MVC: IMP
+We export stuff from the views and models so that the controllers can use them
