@@ -321,3 +321,6 @@ SASS (sassy css)
 
 // MVC: IMP
 We export stuff from the views and models so that the controllers can use them
+
+timeout(10) ==> bad, 10 is a 'magic number' (not obvious at first glance)
+ ==> timeout(TIMEOUT_SEC) (imported from config.js)
