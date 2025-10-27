@@ -5,12 +5,16 @@ import { getJSON } from './helpers.js';
 
 export const state = {
   recipe: {},
+  search: {
+    query: '',
+    results: [],
+  },
 };
 
 // Changes state object (not a pure function)
 export const loadRecipe = async function (id) {
   try {
-    const data = await getJSON(`${API_URL}/${id}`);
+    const data = await getJSON(`${API_URL}${id}`);
 
     // console.log(res, data);
     const { recipe } = data.data; // destructuring since data.data.recipe exists
@@ -27,6 +31,25 @@ export const loadRecipe = async function (id) {
     };
 
     console.log(state.recipe);
+  } catch (err) {
+    console.error(`${err} 💥💥💥`);
+    throw err;
+  }
+};
+export const loadSearchResults = async function (query) {
+  try {
+    state.search.query = query;
+
+    const data = await getJSON(`${API_URL}?search=${query}`);
+
+    state.search.results = data.data.recipes.map(rec => {
+      return {
+        id: rec.id,
+        title: rec.title,
+        publisher: rec.publisher,
+        image: rec.image_url,
+      };
+    });
   } catch (err) {
     console.error(`${err} 💥💥💥`);
     throw err;
