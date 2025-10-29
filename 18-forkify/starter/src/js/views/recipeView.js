@@ -63,11 +63,6 @@ class RecipeView extends View {
             </div>
           </div>
 
-          <div class="recipe__user-generated">
-            <svg>
-              <use href="${icons}#icon-user"></use>
-            </svg>
-          </div>
           <button class="btn--round">
             <svg class="">
               <use href="${icons}#icon-bookmark-fill"></use>
@@ -112,7 +107,9 @@ class RecipeView extends View {
                 <use href="${icons}#icon-check"></use>
               </svg>
               <div class="recipe__quantity">${
-                ing.quantity ? new Fraction(ing.quantity).toFraction() : ''
+                ing.quantity
+                  ? new Fraction(ing.quantity).simplify(0.01).toFraction(true)
+                  : ''
               }</div>
               <div class="recipe__description">
                 <span class="recipe__unit">${ing.unit}</span>

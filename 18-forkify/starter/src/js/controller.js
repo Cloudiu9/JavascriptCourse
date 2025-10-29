@@ -10,6 +10,11 @@ import 'regenerator-runtime/runtime';
 
 // https://forkify-api.jonas.io
 
+// parcel makes data/state persist between reloads
+if (module.hot) {
+  module.hot.accept();
+}
+
 const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1); // skipping the # from the hash
