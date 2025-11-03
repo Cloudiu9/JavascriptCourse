@@ -15,6 +15,48 @@ export default class View {
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
+  update(data) {
+    this._data = data;
+
+    // Generate new markup, compare to oldmarkup, only change text/attributes that have changed
+    const newMarkup = this._generateMarkup();
+
+    // converts 'string' HTML to an actual DOM node object
+    // can use this DOM as if it were a real DOM on the page
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+
+    // converting from NodeList to a real array
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    // console.log(newElements);
+
+    const curElements = Array.from(this._parentElement.querySelectorAll('*'));
+
+    newElements.forEach((newEl, i) => {
+      // double looping for both elements
+      const curEl = curElements[i];
+
+      // using 'isEqualNode' to compare elements from both DOMs
+      // if dom elem is different, change current element's content to the new one
+      // nodeValue only extracts the TEXT CONTENT of an element IMP
+
+      // Updates changed TEXT
+      if (
+        !newEl.isEqualNode(curEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        curEl.textContent = newEl.textContent;
+      }
+
+      // replace all attributes in the cur elem with the atr coming from the new element
+      // Updates changed ATTRIBUTES (data_update_to = 5 ==> = 6)
+      if (!newEl.isEqualNode(curEl)) {
+        Array.from(newEl.attributes).forEach(attr =>
+          curEl.setAttribute(attr.name, attr.value)
+        );
+      }
+    });
+  }
+
   _clear() {
     this._parentElement.innerHTML = '';
   }

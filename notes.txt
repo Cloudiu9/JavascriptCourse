@@ -324,3 +324,16 @@ We export stuff from the views and models so that the controllers can use them
 
 timeout(10) ==> bad, 10 is a 'magic number' (not obvious at first glance)
  ==> timeout(TIMEOUT_SEC) (imported from config.js)
+
+// converts 'string' HTML to an actual DOM node object
+const newDOM = document.createRange().createContextualFragment(newMarkup);
+
+// using 'isEqualNode' to compare elements from both DOMs
+// if dom elem is different, change current element's content to the new one
+// nodeValue only extracts the TEXT CONTENT of an element IMP
+if (
+!newEl.isEqualNode(curEl) &&
+newEl.firstChild.nodeValue.trim() !== ''
+) {
+  curEl.textContent = newEl.textContent;
+}
