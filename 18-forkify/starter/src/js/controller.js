@@ -80,7 +80,10 @@ const controlServings = function (newServings) {
 };
 
 const controlAddBookmark = function () {
-  model.addBookMark(model.state.recipe);
+  // if it's not bookmarked, add it
+  if (!model.state.recipe.bookmarked) model.addBookMark(model.state.recipe);
+  // if it is bookmarked, remove it
+  else model.deleteBookMark(model.state.recipe.id);
 
   recipeView.update(model.state.recipe);
 };

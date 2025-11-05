@@ -337,3 +337,10 @@ newEl.firstChild.nodeValue.trim() !== ''
 ) {
   curEl.textContent = newEl.textContent;
 }
+
+
+// When we add something, we need the entire data
+export const addBookMark = function (recipe) 
+
+// But when we delete something, we only need it's ID
+export const addBookMark = function (id)
