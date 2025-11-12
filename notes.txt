@@ -344,3 +344,15 @@ export const addBookMark = function (recipe)
 
 // But when we delete something, we only need it's ID
 export const addBookMark = function (id)
+
+Object.entries() // converts to an array
+
+const data = Object.fromEntries(dataArr); // converts an array of entries to an object
+
+// startsWith IMP
+const ingredients = Object.entries(newRecipe).filter(
+  entry => entry[0].startsWith('ingredient') && entry[1] !== ''
+);
+
+IMP handy trick to conditionally render an attribute
+...(recipe.key && { key: recipe.key }), // only adds the key attribute if there is a key
