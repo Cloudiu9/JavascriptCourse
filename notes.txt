@@ -356,3 +356,27 @@ const ingredients = Object.entries(newRecipe).filter(
 
 IMP handy trick to conditionally render an attribute
 ...(recipe.key && { key: recipe.key }), // only adds the key attribute if there is a key
+
+// Change ID in the URL (History API, first 2 args don't matter)
+// change url without reloading the page
+window.history.pushState(null, '', `#${model.state.recipe.id}`);
+
+// Going back to the last page
+window.history.back()
+
+/** for JSDoc template
+
+
+/*
+CHALLENGES FOR FORKIFY: IMP
+Updates/tweaks:
+1. Display the number of pages between pagination buttons
+2. Add ability to sort by duration or number of ingredients (?)
+3. Perform ingredient validation in view, before submitting form (warn users that format is wrong)
+4. Improve recipe ingredient input: separate in multiple fields, allow more than 6 ingredients
+
+Features:
+1. Shopping list feature: button on recipe to add ingredients to a list (on each recipe, a button to add all ingredients to a list, display list on UI, in hidden panel next to bookmarks)
+2. Weekly meal planning feature: assign recipes to the next 7 days and show on a weekly calendar (add a drop down menu to each recipe and choose to which of next 7 days to assign it, menu-> panel to show next 7 days + recipe)
+3. Get nutrition data on each ingredient from spoonacular API and calculate total calories of recipe (https://spoonacular.com/food-api)
+ */
