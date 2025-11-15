@@ -12,6 +12,8 @@
 .pagination {
   margin-top: auto;
   padding: 0 3.5rem;
+  display: flex;
+  justify-content: space-evenly;
 
   &::after {
     content: '';
@@ -21,10 +23,18 @@
 
   &__btn {
     &--prev {
-      float: left;
+      flex: 0.4;
+      justify-content: flex-start;
     }
     &--next {
-      float: right;
+      flex: 0.4;
+      justify-content: flex-end;
+    }
+    &--center {
+      justify-content: center;
+      pointer-events: none;
+      font-size: 1rem;
+      width: 85px;
     }
   }
 }
