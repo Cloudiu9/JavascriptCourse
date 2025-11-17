@@ -23,72 +23,53 @@ class PaginationView extends View {
       this._data.results.length / this._data.resultsPerPage
     );
 
-    // Page 1 and there are more pages
-    if (curPage === 1 && numPages > 1) {
-      return `
-          <button class="btn--inline pagination__btn--center">
-          <span>Page ${curPage} / ${numPages}</span>     
-          </button>
-
-
-        <button data-goto="${
-          curPage + 1
-        }" class="btn--inline pagination__btn--next">
-            <span>Page ${curPage + 1}</span>
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-right"></use>
-            </svg>
-        </button>
-        `;
-    }
-
-    // Last page
-    if (curPage === numPages && numPages > 1) {
-      return `
-        <button data-goto="${
-          curPage - 1
-        }" class="btn--inline pagination__btn--prev">
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-left"></use>
-            </svg>
-            <span>Page ${curPage - 1}</span>
-          </button>
-
-        <button class="btn--inline pagination__btn--center">
-          <span>Page ${curPage} / ${numPages}</span>     
-        </button>
-          `;
-    }
-
-    // Other page
-    if (curPage < numPages) {
-      return `
-        <button data-goto="${
-          curPage - 1
-        }" class="btn--inline pagination__btn--prev">
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-left"></use>
-            </svg>
-            <span>Page ${curPage - 1}</span>
-        </button>
-          
-        <button class="btn--inline pagination__btn--center">
-          <span>Page ${curPage} / ${numPages}</span>     
-        </button>
-
-        <button data-goto="${
-          curPage + 1
-        }" class="btn--inline pagination__btn--next">
-            <span>Page ${curPage + 1}</span>
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-right"></use>
-            </svg>
+    // Build Prev button (visible or hidden)
+    const prevBtn =
+      curPage > 1
+        ? `
+      <button data-goto="${
+        curPage - 1
+      }" class="btn--inline pagination__btn--prev">
+        <svg class="search__icon">
+          <use href="${icons}#icon-arrow-left"></use>
+        </svg>
+        <span>Page ${curPage - 1}</span>
       </button>
-          `;
-    }
+      `
+        : `
+      <button class="btn--inline pagination__btn--prev is-hidden"></button>
+      `;
 
-    // Page 1 and there are no more pages
-    return ``;
+    // Build Next button (visible or hidden)
+    const nextBtn =
+      curPage < numPages
+        ? `
+      <button data-goto="${
+        curPage + 1
+      }" class="btn--inline pagination__btn--next">
+        <span>Page ${curPage + 1}</span>
+        <svg class="search__icon">
+          <use href="${icons}#icon-arrow-right"></use>
+        </svg>
+      </button>
+      `
+        : `
+      <button class="btn--inline pagination__btn--next is-hidden"></button>
+      `;
+
+    // Always render center button
+    const centerBtn = `
+    <button class="btn--inline pagination__btn--center">
+      <span>Page ${curPage} / ${numPages}</span>
+    </button>
+  `;
+
+    // Return all three every time
+    return `
+    ${prevBtn}
+    ${centerBtn}
+    ${nextBtn}
+  `;
   }
 }
 
