@@ -12,6 +12,26 @@ class BookmarksView extends View {
     window.addEventListener('load', handler);
   }
 
+  addHandlerDeleteBookmark(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      // doesn't exist when the page starts, it's loaded in later ==> we need to add handler to parent (event delegation IMP)
+      const btn = e.target.closest('.preview__remove--bookmark');
+
+      if (!btn) return;
+
+      // BLOCK the anchor
+      e.preventDefault(); // stop navigation
+      e.stopPropagation(); // stop bubbling to the <a>
+
+      const preview = btn.closest('.preview');
+      if (!preview) return;
+
+      const id = preview.dataset.id;
+
+      handler(id);
+    });
+  }
+
   _generateMarkup() {
     // console.log(this._data);
     return this._data

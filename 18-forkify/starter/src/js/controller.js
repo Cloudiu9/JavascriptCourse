@@ -95,6 +95,16 @@ const controlAddBookmark = function () {
   bookmarksView.render(model.state.bookmarks);
 };
 
+const controlDeleteBookmark = function (id) {
+  // Remove bookmark
+  model.deleteBookMark(id);
+
+  // Only update the recipe view if the deleted bookmark is the currently shown recipe
+  if (model.state.recipe.id === id) recipeView.update(model.state.recipe);
+
+  bookmarksView.render(model.state.bookmarks);
+};
+
 const controlBookmarks = function () {
   bookmarksView.render(model.state.bookmarks);
 };
@@ -134,6 +144,7 @@ const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
   recipeView.addHandlerAddBookmark(controlAddBookmark);
+  bookmarksView.addHandlerDeleteBookmark(controlDeleteBookmark);
   searchView.addHandlerSearch(controlSearchResults); // subscriber
   paginationView.addHandlerClick(controlPagination);
   addRecipeView.addHandlerUpload(controlAddRecipe);

@@ -102,4 +102,21 @@
       fill: $color-primary;
     }
   }
+
+  &__remove--bookmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 2rem;
+    width: 2rem;
+
+    font-size: 1.4rem;
+    z-index: 1000;
+
+    &:hover {
+      background-color: red;
+      cursor: pointer;
+    }
+  }
 }
