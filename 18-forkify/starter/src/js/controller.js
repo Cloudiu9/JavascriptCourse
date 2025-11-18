@@ -11,6 +11,7 @@ import addRecipeView from './views/addRecipeView.js';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { MODAL_CLOSE_SEC } from './config.js';
+import foodJokeView from './views/foodJokeView.js';
 
 // https://forkify-api.jonas.io
 
@@ -139,6 +140,16 @@ const controlAddRecipe = async function (newRecipe) {
   }
 };
 
+const controlAddFoodJoke = async function () {
+  try {
+    // foodJokeView.renderSpinner();
+
+    foodJokeView.render();
+  } catch (err) {
+    foodJokeView.renderError();
+  }
+};
+
 const init = function () {
   bookmarksView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRender(controlRecipes);
@@ -148,5 +159,6 @@ const init = function () {
   searchView.addHandlerSearch(controlSearchResults); // subscriber
   paginationView.addHandlerClick(controlPagination);
   addRecipeView.addHandlerUpload(controlAddRecipe);
+  foodJokeView.addHandlerShowJoke(controlAddFoodJoke);
 };
 init();
