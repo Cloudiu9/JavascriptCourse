@@ -11,7 +11,8 @@ import addRecipeView from './views/addRecipeView.js';
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { MODAL_CLOSE_SEC } from './config.js';
-import foodJokeView from './views/foodJokeView.js';
+import jokeView from './views/jokeView.js';
+import jokeView from './views/jokeView.js';
 
 // https://forkify-api.jonas.io
 
@@ -140,13 +141,18 @@ const controlAddRecipe = async function (newRecipe) {
   }
 };
 
-const controlAddFoodJoke = async function () {
+const controlAddJoke = async function () {
   try {
-    // foodJokeView.renderSpinner();
+    // jokeView.renderSpinner();
 
-    foodJokeView.render();
+    const joke = await model.loadJoke();
+    jokeView.render(joke);
+
+    jokeView.addHandlerClose();
+
+    document.querySelector('.joke-container').classList.remove('hidden');
   } catch (err) {
-    foodJokeView.renderError();
+    jokeView.renderError();
   }
 };
 
@@ -159,6 +165,6 @@ const init = function () {
   searchView.addHandlerSearch(controlSearchResults); // subscriber
   paginationView.addHandlerClick(controlPagination);
   addRecipeView.addHandlerUpload(controlAddRecipe);
-  foodJokeView.addHandlerShowJoke(controlAddFoodJoke);
+  jokeView.addHandlerShowJoke(controlAddJoke);
 };
 init();

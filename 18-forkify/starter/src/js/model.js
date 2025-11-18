@@ -2,6 +2,7 @@ import { async } from 'regenerator-runtime';
 
 import { API_URL, KEY, RES_PER_PAGE } from './config.js';
 import { AJAX } from './helpers.js';
+import { SPOONACULAR_KEY } from './config2.js';
 
 export const state = {
   recipe: {},
@@ -164,4 +165,15 @@ export const uploadRecipe = async function (newRecipe) {
   }
 };
 
-// export const
+export const loadJoke = async function () {
+  const req = await AJAX(
+    `https://v2.jokeapi.dev/joke/Any?nsfw=false&racist=false&religious=false&sexist=false&explicit=false&safe-mode`
+  );
+
+  const data = req.setup
+    ? `${req.setup + '...<br>...' + req.delivery}`
+    : `${req.joke}`;
+
+  console.log(req);
+  return data;
+};
