@@ -1,7 +1,7 @@
 import { async } from 'regenerator-runtime';
 
 import { API_URL, KEY, RES_PER_PAGE } from './config.js';
-import { AJAX } from './helpers.js';
+import { AJAX, AJAXSpoonacular, normalizeIngredient } from './helpers.js';
 import { SPOONACULAR_KEY } from './config2.js';
 
 export const state = {
@@ -176,4 +176,49 @@ export const loadJoke = async function () {
 
   console.log(req);
   return data;
+};
+
+export const loadIngredientNutrition = async function (ing) {
+  const res = await AJAX(
+    `https://v2.jokeapi.dev/joke/Any?nsfw=false&racist=false&religious=false&sexist=false&explicit=false&safe-mode`
+  );
+
+  const info = res[0];
+
+  if (!info || !info.nutrition) {
+    return {
+      original: ing,
+      calories: 0,
+      missing: true,
+    };
+  }
+
+  const caloriesObj = info.nutrition.nutrients.find(n => n.name === 'Calories');
+  const calories = caloriesObj ? caloriesObj.amount : 0;
+
+  console.log('Parsed ingredient:', ing, res);
+
+  return {
+    original: ing,
+    calories,
+    name: info.name,
+    amount: info.amount,
+    unit: info.unit,
+    missing: false,
+  };
+};
+
+export const loadRecipeNutrition = async function () {
+  const ingredients = state.recipe.ingredients;
+
+  const data = await Promise.all(
+    ingredients.map(obj => loadIngredientNutrition(normalizeIngredient(obj)))
+  );
+
+  const totalCalories = data.reduce((sum, ing) => sum + ing.calories, 0);
+
+  return {
+    perIngredient: data,
+    totalCalories,
+  };
 };

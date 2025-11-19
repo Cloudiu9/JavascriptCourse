@@ -13,6 +13,7 @@ import 'regenerator-runtime/runtime';
 import { MODAL_CLOSE_SEC } from './config.js';
 import jokeView from './views/jokeView.js';
 import jokeView from './views/jokeView.js';
+import nutritionView from './views/nutritionView.js';
 
 // https://forkify-api.jonas.io
 
@@ -143,16 +144,29 @@ const controlAddRecipe = async function (newRecipe) {
 
 const controlAddJoke = async function () {
   try {
-    // jokeView.renderSpinner();
-
     const joke = await model.loadJoke();
     jokeView.render(joke);
 
     jokeView.addHandlerClose();
-
-    document.querySelector('.joke-container').classList.remove('hidden');
   } catch (err) {
     jokeView.renderError();
+  }
+};
+
+const controlNutrition = async function () {
+  try {
+    // model.loadIngredientNutrition('1 cup onions').then(console.log);
+
+    // console.log('calling loadRecipeNutrition');
+    const nutri = await model.loadRecipeNutrition();
+
+    // console.log('nutrition loaded:', nutri);
+    nutritionView.render(nutri);
+
+    nutritionView.addHandlerClose();
+  } catch (err) {
+    console.error('REAL ERROR:', err);
+    nutritionView.renderError('Failed to load nutrition');
   }
 };
 
@@ -166,5 +180,6 @@ const init = function () {
   paginationView.addHandlerClick(controlPagination);
   addRecipeView.addHandlerUpload(controlAddRecipe);
   jokeView.addHandlerShowJoke(controlAddJoke);
+  nutritionView.addHandlerShowNutrition(controlNutrition);
 };
 init();

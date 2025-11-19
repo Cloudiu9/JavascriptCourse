@@ -25,13 +25,15 @@ class JokeView extends View {
         this._parentElement.innerHTML = '';
       }
     });
+
+    this._parentElement.classList.remove('hidden');
   }
 
   _generateMarkup() {
     return `
       <div class="joke-box">
-        <button class="joke-close">×</button>
-        <p>${this._data}</p>
+        <button style="position: absolute; z-index: 10000; font-size:2rem" class="joke-close">×</button>
+        <p style="position: absolute; z-index: 3; margin-top: 10px">${this._data}</p>
       </div>
         `;
   }
