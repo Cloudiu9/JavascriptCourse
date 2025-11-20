@@ -384,6 +384,10 @@ Updates/tweaks:
 Features:
 1. Shopping list feature: button on recipe to add ingredients to a list (on each recipe, a button to add all ingredients to a list, display list on UI, in hidden panel next to bookmarks)
 2. Weekly meal planning feature: assign recipes to the next 7 days and show on a weekly calendar (add a drop down menu to each recipe and choose to which of next 7 days to assign it, menu-> panel to show next 7 days + recipe)
-3. Display a random food joke from spoonacular
-4. Get nutrition data on each ingredient from spoonacular API and calculate total calories of recipe (https://spoonacular.com/food-api) TODO
+3. Display a random joke TODO DONE
+4. Get nutrition data on each ingredient from spoonacular API and calculate total calories of recipe (https://spoonacular.com/food-api) TODO DONE, needs more testing IMP (works, but ing calories are all 0, probably inconsistent ingredient naming from api)
  */
+
+free hosting (for front-end only -> no database, serverside code):
+Netlify.com
+surge.sh (simpler, terminal command)

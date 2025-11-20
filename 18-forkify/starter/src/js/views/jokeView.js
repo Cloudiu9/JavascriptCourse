@@ -4,6 +4,7 @@ import View from './View.js';
 
 class JokeView extends View {
   _parentElement = document.querySelector('.joke-container');
+  _recipeCon = document.querySelector('.recipe__details');
 
   addHandlerShowJoke(handler) {
     document
@@ -30,10 +31,13 @@ class JokeView extends View {
   }
 
   _generateMarkup() {
+    console.log(this._recipeCon);
     return `
       <div class="joke-box">
         <button style="position: absolute; z-index: 10000; font-size:2rem" class="joke-close">×</button>
-        <p style="position: absolute; z-index: 3; margin-top: 10px">${this._data}</p>
+        <p style="${
+          this._recipeCon ? 'position: absolute; ' : 'position: relative; '
+        }z-index: 3; margin-top: 10px">${this._data}</p>
       </div>
         `;
   }

@@ -179,8 +179,9 @@ export const loadJoke = async function () {
 };
 
 export const loadIngredientNutrition = async function (ing) {
-  const res = await AJAX(
-    `https://v2.jokeapi.dev/joke/Any?nsfw=false&racist=false&religious=false&sexist=false&explicit=false&safe-mode`
+  const res = await AJAXSpoonacular(
+    `https://api.spoonacular.com/recipes/parseIngredients?apiKey=${SPOONACULAR_KEY}`,
+    { ingredientList: ing }
   );
 
   const info = res[0];

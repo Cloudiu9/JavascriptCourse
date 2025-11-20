@@ -26,14 +26,13 @@ class NutritionView extends View {
     this._container.classList.remove('hidden');
   }
 
+  // TODO does it work if only the div parent has z-index:3? yes
   _generateMarkup() {
     return `
       <div style="position: absolute; z-index: 3; width: 20rem" class="nutrition-box">
-        <button style="z-index: 3; cursor:pointer" class="nutrition-close">×</button>
-        <h2 style="z-index: 3">Nutrition</h2>
-        <p style="z-index: 3">Total calories: ${this._data.totalCalories.toFixed(
-          0
-        )}</p>
+        <button style="cursor:pointer" class="nutrition-close">×</button>
+        <h2>Nutrition</h2>
+        <p>Total calories: ${this._data.totalCalories.toFixed(0)}</p>
 
         <ul>
           ${this._data.perIngredient
@@ -46,6 +45,7 @@ class NutritionView extends View {
     `;
   }
 
+  // TODO is this doing anything? : yes. if this is commented out, it renders the box above the button, not below it
   render(data) {
     this._data = data;
     this._container.innerHTML = this._generateMarkup(); // render in container
