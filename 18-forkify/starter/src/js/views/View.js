@@ -75,9 +75,7 @@ export default class View {
   renderSpinner() {
     const markup = `
             <div class="spinner">
-              <svg>
-                <use href="${icons}#icon-loader"></use>
-              </svg>
+              <i class="fas fa-spinner"></i>
             </div>`;
 
     this._clear();
@@ -88,9 +86,7 @@ export default class View {
     const markup = `
               <div class="error">
                 <div>
-                  <svg>
-                    <use href="${icons}#icon-alert-triangle"></use>
-                  </svg>
+                  <i class="fas fa-ban"></i>
                 </div>
                 <p>${message}</p>
               </div> `;
@@ -103,9 +99,7 @@ export default class View {
     const markup = `
               <div class="message">
                 <div>
-                  <svg>
-                    <use href="${icons}#icon-smile"></use>
-                  </svg>
+                  <i class="fas fa-face-smile nav__icon"></i>
                 </div>
                 <p>${message}</p>
               </div> `;

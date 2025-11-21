@@ -2,7 +2,7 @@ import { async } from 'regenerator-runtime';
 
 import { API_URL, KEY, RES_PER_PAGE } from './config.js';
 import { AJAX, AJAXSpoonacular, normalizeIngredient } from './helpers.js';
-import { SPOONACULAR_KEY } from './config2.js';
+import { SPOONACULAR_KEY } from './config.js';
 
 export const state = {
   recipe: {},

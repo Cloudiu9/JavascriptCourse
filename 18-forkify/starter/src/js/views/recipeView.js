@@ -44,6 +44,8 @@ class RecipeView extends View {
   }
 
   _generateMarkup() {
+    const btnBookmark = document.querySelector('.btn--bookmark');
+
     return `
         <figure class="recipe__fig">
           <img src="${this._data.image}" alt="${
@@ -56,18 +58,14 @@ class RecipeView extends View {
 
         <div class="recipe__details">
           <div class="recipe__info">
-            <svg class="recipe__info-icon">
-              <use href="${icons}#icon-clock"></use>
-            </svg>
+            <i class="fas fa-clock recipe__info-icon"></i>
             <span class="recipe__info-data recipe__info-data--minutes">${
               this._data.cookingTime
             }</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
-            <svg class="recipe__info-icon">
-              <use href="${icons}#icon-users"></use>
-            </svg>
+              <i class="fas fa-user recipe__info-icon"></i>
             <span class="recipe__info-data recipe__info-data--people">${
               this._data.servings
             }</span>
@@ -77,31 +75,23 @@ class RecipeView extends View {
               <button class="btn--tiny btn--update-servings" data-update-to="${
                 this._data.servings - 1
               }">
-                <svg>
-                  <use href="${icons}#icon-minus-circle"></use>
-                </svg>
+              <i class="fas fa-minus"></i>
               </button>
               <button class="btn--tiny btn--update-servings" data-update-to="${
                 this._data.servings + 1
               }">
-                <svg>
-                  <use href="${icons}#icon-plus-circle"></use>
-                </svg>
+              <i class="fas fa-plus"></i>
               </button>
             </div>
           </div>
 
           <div class="recipe__user-generated ${this._data.key ? '' : 'hidden'}">
-              <svg>
-                <use href="${icons}#icon-user"></use>
-              </svg>
+              <i class="fas fa-user"></i>
           </div>
-          <button class="btn--round btn--bookmark">
-            <svg class="">
-              <use href="${icons}#icon-bookmark${
-      this._data.bookmarked ? '-fill' : ''
-    }"></use>
-            </svg>
+          <button class="btn--round btn--bookmark ${
+            this._data.bookmarked ? `bookmark-fill` : ''
+          }">
+              <i class="fas fa-bookmark"></i>
           </button>
         </div>
 
@@ -127,9 +117,7 @@ class RecipeView extends View {
             target="_blank"
           >
             <span>Directions</span>
-            <svg class="search__icon">
-              <use href="${icons}#icon-arrow-right"></use>
-            </svg>
+            <i class="fas fa-arrow-right search__icon"></i>
           </a>
         </div>
     `;
@@ -138,9 +126,7 @@ class RecipeView extends View {
   _generateMarkupIngredient(ing) {
     return `
             <li class="recipe__ingredient">
-              <svg class="recipe__icon">
-                <use href="${icons}#icon-check"></use>
-              </svg>
+              <i class="fas fa-check recipe__icon"></i>
               <div class="recipe__quantity">${
                 ing.quantity
                   ? new Fraction(ing.quantity).simplify(0.01).toFraction(true)

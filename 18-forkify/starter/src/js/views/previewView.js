@@ -22,9 +22,7 @@ class PreviewView extends View {
                 <div class="preview__user-generated ${
                   this._data.key ? '' : 'hidden'
                 }">
-                  <svg>
-                    <use href="${icons}#icon-user"></use>
-                  </svg>
+                  <i class="fas fa-user"></i>
                 </div>
                 <button style="border:none" aria-label="Remove bookmark" class=${
                   this._data.bookmarked
