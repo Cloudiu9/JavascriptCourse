@@ -391,3 +391,38 @@ Features:
 free hosting (for front-end only -> no database, serverside code):
 Netlify.com
 surge.sh (simpler, terminal command)
+
+
+GIT ESSENTIALS: IMP
+- starting new repo:
+git init
+git add .
+git commit -m "Initial commit"
+git status (check if anything needs to be committed)
+
+- when a bug happens and you want to go to previous commit:
+git reset --hard HEAD
+
+- undo a previous commit (when you commited a bug) (dangerous, next method is better)
+git log (see all commits)
+    copy a commit id (ex: cab71e90a96039d23d7158b3b8f...)
+    q or :q to quit
+git reset --hard COMMIT_ID
+
+- BRANCHES IMP (usually NEVER work in the master branch, add features in a diff branch then merge)
+git branch (show all branches)
+    q to quit
+git branch new-feature (create new branch)
+git checkout new-feature (switch to new branch)
+git add -A
+git commit -m "Added new feature"
+
+// switch back to master (original) branch and integrate the new branch
+git checkout master (or main)
+git merge new-feature
+
+- push to remote repo (on github)
+git remote add origin REPO_URL
+git push origin master (if we only want to push the master branch)
+git push origin new-feature
+    add a README.md file locally then push it to github
